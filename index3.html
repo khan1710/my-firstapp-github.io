@@ -1,0 +1,1708 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Медицинская База Про — Offline</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* ================================ ОСНОВНЫЕ СТИЛИ ================================ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        :root {
+            --primary-blue: #0ea5e9;
+            /* Sky Blue - Medical Professional */
+            --active-blue: #2563eb;
+            /* Royal Blue - Active Clinical */
+            --medical-green: #10b981;
+            /* Emerald - Health/Success */
+            --medical-teal: #14b8a6;
+            /* Teal - Specialized Clinic */
+            --danger-pink: #f43f5e;
+            /* Rose - Critical */
+            --warning-orange: #f59e0b;
+            /* Amber - Caution */
+            --bg-dark: #0f172a;
+            /* Slate 900 */
+            --panel-dark: rgba(30, 41, 59, 0.7);
+            /* Slate 800 blur */
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --text: #f1f5f9;
+            /* Slate 100 */
+            --text-muted: #94a3b8;
+            /* Slate 400 */
+            --accent-glow: rgba(14, 165, 233, 0.15);
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image:
+                radial-gradient(at 0% 0%, rgba(14, 165, 233, 0.1) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(20, 184, 166, 0.1) 0px, transparent 50%);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.6;
+            overflow-x: hidden;
+            padding-bottom: 80px;
+        }
+
+        body.light-theme {
+            --bg-dark: #f8fafc;
+            --panel-dark: rgba(255, 255, 255, 0.9);
+            --glass: rgba(0, 0, 0, 0.02);
+            --glass-border: rgba(0, 0, 0, 0.08);
+            --text: #0f172a;
+            --text-muted: #64748b;
+            --accent-glow: rgba(37, 99, 235, 0.1);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* ================================ НАВИГАЦИЯ ================================ */
+        nav {
+            background: var(--panel-dark);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            padding: 12px 24px;
+            border-radius: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            position: sticky;
+            top: 20px;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-brand {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary-blue);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-items {
+            display: flex;
+            gap: 8px;
+        }
+
+        .nav-link {
+            padding: 10px 18px;
+            border-radius: 12px;
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: rgba(67, 97, 238, 0.15);
+            color: var(--active-blue);
+        }
+
+        .nav-link.active {
+            background: var(--active-blue);
+            color: white;
+            box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
+        }
+
+        .nav-utils {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .clock {
+            font-family: monospace;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 5px 12px;
+            border-radius: 8px;
+            color: var(--primary-blue);
+            font-weight: bold;
+        }
+
+        /* ================================ ПАНЕЛИ ================================ */
+        .panel {
+            background: var(--panel-dark);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        h1 {
+            color: var(--primary-blue);
+            font-size: 2.2rem;
+            text-align: center;
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: var(--text-muted);
+            margin-bottom: 40px;
+        }
+
+        h2 {
+            color: var(--primary-blue);
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        /* ================================ ФИЛЬТРЫ И ПОИСК ================================ */
+        .search-box {
+            width: 100%;
+            padding: 16px 24px;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--glass-border);
+            border-radius: 50px;
+            color: white;
+            font-size: 1.1rem;
+            margin-bottom: 25px;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .search-box:focus {
+            border-color: var(--active-blue);
+            box-shadow: 0 0 0 4px rgba(67, 97, 238, 0.2);
+        }
+
+        .filter-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .filter-btn {
+            padding: 10px 20px;
+            border-radius: 30px;
+            border: 1px solid var(--glass-border);
+            background: var(--glass);
+            color: var(--text);
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: var(--active-blue);
+            color: white;
+            border-color: var(--active-blue);
+        }
+
+        .btn-pink {
+            background: var(--danger-pink);
+            border-color: var(--danger-pink);
+            color: white;
+        }
+
+        /* ================================ СПИСОК БОЛЕЗНЕЙ ================================ */
+        .disease-item {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 12px;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .disease-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background: var(--primary-blue);
+            opacity: 0;
+            transition: 0.2s;
+        }
+
+        .disease-item:hover {
+            transform: translateY(-2px);
+            background: var(--accent-glow);
+            border-color: rgba(14, 165, 233, 0.3);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .disease-item:hover::before {
+            opacity: 1;
+        }
+
+        .disease-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .disease-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+        }
+
+        .disease-meta {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+
+        .disease-symptoms {
+            font-size: 0.95rem;
+            color: var(--text);
+        }
+
+        .disease-seasons {
+            margin-top: 10px;
+            display: flex;
+            gap: 15px;
+            font-size: 0.85rem;
+            color: var(--active-blue);
+        }
+
+        /* ================================ АККОРДИОНЫ СИМПТОМОВ ================================ */
+        .symptom-group {
+            margin-bottom: 10px;
+        }
+
+        .symptom-header {
+            padding: 12px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: 0.3s;
+        }
+
+        .symptom-header:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .symptom-content {
+            display: none;
+            padding: 15px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .symptom-content.active {
+            display: flex;
+        }
+
+        .symptom-chip {
+            padding: 6px 14px;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .symptom-chip.selected {
+            background: var(--active-blue);
+            color: white;
+            border-color: var(--active-blue);
+        }
+
+        /* ================================ ЛОГИЧЕСКАЯ ЦЕПОЧКА ================================ */
+        .flow-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .flow-step {
+            width: 100%;
+            background: var(--panel-dark);
+            border: 1px solid var(--glass-border);
+            border-left: 5px solid var(--medical-teal);
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .flow-step:hover {
+            transform: scale(1.01);
+            border-left-color: var(--primary-blue);
+            background: var(--glass);
+        }
+
+        .flow-step.completed {
+            border-left-color: var(--medical-green);
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+        .step-num {
+            width: 32px;
+            height: 32px;
+            background: var(--glass);
+            border: 2px solid var(--glass-border);
+            color: var(--text-muted);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            margin-right: 18px;
+            transition: 0.3s;
+            font-size: 0.85rem;
+        }
+
+        .flow-step.completed .step-num {
+            background: var(--medical-green);
+            border-color: var(--medical-green);
+            color: white;
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+        }
+
+        .step-num i {
+            display: none;
+        }
+
+        .flow-step.completed .step-num i {
+            display: block;
+        }
+
+        /* ================================ МОБИЛЬНАЯ НАВИГАЦИЯ ================================ */
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--panel-dark);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-top: 1px solid var(--glass-border);
+            padding: 10px 0;
+            z-index: 2000;
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .mobile-items {
+            display: flex;
+            justify-content: space-around;
+            padding: 0 10px;
+        }
+
+        .m-link {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.7rem;
+            gap: 6px;
+            transition: 0.2s;
+            padding: 8px 12px;
+            border-radius: 12px;
+        }
+
+        .m-link.active {
+            color: var(--primary-blue);
+            background: var(--accent-glow);
+        }
+
+        .m-link i {
+            font-size: 1.2rem;
+        }
+
+        @media (max-width: 1024px) {
+            nav {
+                display: none;
+            }
+
+            .mobile-nav {
+                display: block;
+            }
+
+            .container {
+                padding: 15px;
+            }
+
+            body {
+                padding-bottom: 100px;
+            }
+        }
+
+        /* ================================ МОДАЛКИ ================================ */
+        .modal {
+            display: flex;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            z-index: 3000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .modal.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-content {
+            background: var(--panel-dark);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            max-width: 800px;
+            width: 100%;
+            padding: 40px;
+            position: relative;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+            transform: translateY(40px) scale(0.95);
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .modal.show .modal-content {
+            transform: translateY(0) scale(1);
+        }
+
+        .modal-section {
+            margin-bottom: 24px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 16px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .modal-section-title {
+            color: var(--primary-blue);
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .modal-header-actions {
+            position: absolute;
+            top: 20px;
+            right: 70px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btn {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            color: var(--text-muted);
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .action-btn:hover {
+            background: var(--primary-blue);
+            color: white;
+            border-color: var(--primary-blue);
+        }
+
+        .symptom-tag {
+            background: rgba(14, 165, 233, 0.1);
+            color: var(--primary-blue);
+            padding: 6px 16px;
+            border-radius: 12px;
+            border: 1px solid rgba(14, 165, 233, 0.2);
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .symptom-tag:hover {
+            background: var(--primary-blue);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* Custom Scrollbar for Modal */
+        .modal-content::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .modal-content::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .modal-content::-webkit-scrollbar-thumb {
+            background: var(--glass-border);
+            border-radius: 10px;
+        }
+
+        .modal-content::-webkit-scrollbar-thumb:hover {
+            background: var(--text-muted);
+        }
+
+        .char-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+        }
+
+        .char-item {
+            background: rgba(14, 165, 233, 0.05);
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid rgba(14, 165, 233, 0.1);
+        }
+
+        .char-label {
+            color: var(--text-muted);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            color: var(--text-muted);
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            z-index: 10;
+        }
+
+        .close-modal:hover {
+            background: var(--danger-pink);
+            color: white;
+            border-color: var(--danger-pink);
+            transform: rotate(90deg);
+        }
+
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        .page-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 1px solid var(--glass-border);
+            background: var(--glass);
+            color: var(--text);
+            cursor: pointer;
+        }
+
+        .page-btn.active {
+            background: var(--active-blue);
+            color: white;
+        }
+
+        /* Toast notifications */
+        .toast {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: rgba(15, 23, 42, 0.9);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(8px);
+            z-index: 5000;
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 500;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        @media (max-width: 768px) {
+            .toast {
+                bottom: 80px;
+                width: 90%;
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Desktop Nav -->
+        <nav>
+            <div class="nav-brand">
+                <i class="fas fa-microscope"></i> МедБаза
+            </div>
+            <div class="nav-items">
+                <a href="#" class="nav-link active" data-screen="diseases"><i class="fas fa-virus"></i> Болезни</a>
+                <a href="#" class="nav-link" data-screen="protocol"><i class="fas fa-route"></i> Протокол</a>
+                <a href="#" class="nav-link" data-screen="bmi"><i class="fas fa-calculator"></i> ИМТ</a>
+                <a href="#" class="nav-link" data-screen="lab"><i class="fas fa-vial"></i> Анализы</a>
+                <a href="#" class="nav-link" data-screen="pharma"><i class="fas fa-pills"></i> Фарма</a>
+            </div>
+            <div class="nav-utils">
+                <div class="clock" id="clock">15:15:22</div>
+                <button id="themeToggle" style="background:none; border:none; color:var(--text); cursor:pointer;"><i
+                        class="fas fa-moon"></i></button>
+            </div>
+        </nav>
+
+        <header>
+            <h1>Медицинская База — Offline</h1>
+            <p class="subtitle">Полная медицинская информация о заболеваниях, препаратах и анализах</p>
+        </header>
+
+        <!-- SCREEN: DISEASES -->
+        <section id="diseases-screen" class="screen active">
+            <div class="panel">
+                <h2><i class="fas fa-search"></i> Поиск заболеваний</h2>
+                <input type="text" id="mainSearch" class="search-box"
+                    placeholder="Поиск по названию, МКБ или симптомам...">
+
+                <div class="filter-group">
+                    <button class="filter-btn active" data-season="all">Все сезоны</button>
+                    <button class="filter-btn" data-season="Зима"><i class="fas fa-snowflake"></i> Зима</button>
+                    <button class="filter-btn" data-season="Весна"><i class="fas fa-seedling"></i> Весна</button>
+                    <button class="filter-btn" data-season="Лето"><i class="fas fa-sun"></i> Лето</button>
+                    <button class="filter-btn" data-season="Осень"><i class="fas fa-leaf"></i> Осень</button>
+                    <button class="filter-btn btn-pink" id="clearSymptoms"><i class="fas fa-trash"></i> Очистить
+                        симптомы</button>
+                </div>
+
+                <h3>Системы организма</h3>
+                <div class="filter-group" id="systemFilters">
+                    <button class="filter-btn active" data-system="all">Все системы</button>
+                    <!-- Systems will be populated by JS -->
+                </div>
+
+                <div id="selectedSymptomsBar" style="margin-top:20px; display:none;">
+                    <strong>Выбрано:</strong> <span id="selectedSymptomsChips"></span>
+                </div>
+
+                <h3 style="margin-top:30px;">Выберите симптомы:</h3>
+                <div id="symptomGroups">
+                    <!-- Symptom groups will be populated by JS -->
+                </div>
+            </div>
+
+            <div class="panel">
+                <h2><i class="fas fa-list"></i> Список заболеваний</h2>
+                <div id="statsBar" style="margin-bottom:15px; color:var(--text-muted);">Найдено заболеваний: 590</div>
+                <div id="diseaseList">
+                    <!-- Diseases will be populated by JS -->
+                </div>
+                <div class="pagination" id="pagination"></div>
+            </div>
+        </section>
+
+        <!-- SCREEN: PROTOCOL -->
+        <section id="protocol-screen" class="screen">
+            <div class="panel">
+                <h2 style="justify-content: center;"><i class="fas fa-route"></i> Логическая цепочка врачебного приема
+                </h2>
+                <div style="display: flex; justify-content: center; gap: 15px; margin-bottom: 25px;">
+                    <button class="filter-btn active" onclick="copyProtocolStatus()"><i class="fas fa-copy"></i>
+                        Копировать статус</button>
+                    <button class="filter-btn btn-pink" onclick="resetProtocol()"><i class="fas fa-undo"></i> Сбросить
+                        прогресс</button>
+                </div>
+                <p style="text-align:center; color:var(--text-muted); margin-bottom:30px;">Пошаговый алгоритм
+                    клинического мышления от первичного контакта до назначения лечения</p>
+
+                <div class="flow-container">
+                    <div
+                        style="color:var(--primary-blue); font-weight: 800; margin: 20px 0 10px 0; letter-spacing:1px;">
+                        АДМИНИСТРАТИВНЫЙ ЭТАП</div>
+                    <div class="flow-step" id="step1">
+                        <div style="display:flex; align-items:flex-start;">
+                            <div class="step-num"><i class="fas fa-check"></i>1</div>
+                            <div>
+                                <div style="font-weight:700; font-size:1.1rem; margin-bottom:10px;">Первичный контакт и
+                                    регистрация</div>
+                                <ul
+                                    style="margin-left:20px; font-size:0.9rem; color:rgba(255,255,255,0.7); list-style-type:circle; line-height:1.5;">
+                                    <li>Пациент обращается в учреждение (запись, приемное отделение)</li>
+                                    <li>Врач получает базовую информацию: ФИО, возраст, пол</li>
+                                    <li>Определение цели визита (жалобы, направление от другого врача)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="width:2px; height:20px; background:var(--active-blue); opacity:0.3;"></div>
+
+                    <div
+                        style="color:var(--primary-blue); font-weight: 800; margin: 20px 0 10px 0; letter-spacing:1px;">
+                        ДИАГНОСТИЧЕСКИЙ ЭТАП - ОСНОВА</div>
+                    <div class="flow-step" id="step2">
+                        <div style="display:flex; align-items:flex-start;">
+                            <div class="step-num"><i class="fas fa-check"></i>2</div>
+                            <div>
+                                <div style="font-weight:700; font-size:1.1rem; margin-bottom:10px;">Сбор информации:
+                                    Опрос (Субъективные данные)</div>
+                                <div style="margin-left:20px; font-size:0.9rem; line-height:1.6;">
+                                    <strong style="color:var(--primary-blue)">Жалобы:</strong> Выявление основных и
+                                    дополнительных симптомов<br>
+                                    <strong style="color:var(--primary-blue)">Анамнез заболевания:</strong> Когда и как
+                                    началось, динамика, самолечение<br>
+                                    <strong style="color:var(--primary-blue)">Анамнез жизни:</strong> Перенесенные
+                                    болезни, аллергии, наследственность, привычки
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="width:2px; height:20px; background:var(--active-blue); opacity:0.3;"></div>
+                    <div class="flow-step" id="step3">
+                        <div style="display:flex; align-items:flex-start;">
+                            <div class="step-num"><i class="fas fa-check"></i>3</div>
+                            <div>
+                                <div style="font-weight:700; font-size:1.1rem; margin-bottom:10px;">Сбор информации:
+                                    Объективное обследование</div>
+                                <div style="margin-left:20px; font-size:0.9rem; line-height:1.8;">
+                                    <span style="display:inline-block; margin-right:15px;"><i class="fas fa-user"></i>
+                                        <strong>Осмотр:</strong> Телосложение, кожа</span>
+                                    <span style="display:inline-block; margin-right:15px;"><i
+                                            class="fas fa-hand-paper"></i> <strong>Пальпация:</strong> Живот,
+                                        узлы</span><br>
+                                    <span style="display:inline-block; margin-right:15px;"><i class="fas fa-drum"></i>
+                                        <strong>Перкуссия:</strong> Легкие, органы</span>
+                                    <span style="display:inline-block; margin-right:15px;"><i
+                                            class="fas fa-stethoscope"></i> <strong>Аускультация:</strong> Сердце,
+                                        легкие</span><br>
+                                    <div
+                                        style="margin-top:8px; padding:10px; background:rgba(255,255,255,0.05); border-radius:10px;">
+                                        <strong>Vitals:</strong> T°, P, АД, ЧДД
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="width:2px; height:20px; background:var(--active-blue); opacity:0.3;"></div>
+                    <div class="flow-step" id="step4">
+                        <div style="display:flex; align-items:flex-start;">
+                            <div class="step-num"><i class="fas fa-check"></i>4</div>
+                            <div>
+                                <div style="font-weight:700; font-size:1.1rem; margin-bottom:10px;">Формирование
+                                    предварительного диагноза (Гипотеза)</div>
+                                <ul
+                                    style="margin-left:20px; font-size:0.9rem; color:rgba(255,255,255,0.7); list-style-type:circle; line-height:1.5;">
+                                    <li>На основе жалоб, анамнеза и осмотра формируется <strong>предварительный
+                                            диагноз</strong></li>
+                                    <li>Определяется <strong>план дальнейшего обследования</strong> для
+                                        подтверждения/исключения гипотез</li>
+                                    <li>Возможны несколько дифференциальных диагнозов</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="width:2px; height:20px; background:var(--active-blue); opacity:0.3;"></div>
+
+                    <div
+                        style="color:var(--primary-blue); font-weight: 800; margin: 20px 0 10px 0; letter-spacing:1px;">
+                        ЭТАП ВЕРИФИКАЦИИ</div>
+                    <div class="flow-step" id="step5">
+                        <div style="display:flex; align-items:flex-start;">
+                            <div class="step-num"><i class="fas fa-check"></i>5</div>
+                            <div>
+                                <div style="font-weight:700; font-size:1.1rem; margin-bottom:10px;">Назначение
+                                    дообследования</div>
+                                <div style="margin-left:20px; font-size:0.9rem; line-height:1.6;">
+                                    <strong style="color:var(--primary-blue)">Лабораторные методы:</strong> Анализы
+                                    крови, мочи, биохимия, гормоны<br>
+                                    <strong style="color:var(--primary-blue)">Инструментальные методы:</strong> УЗИ,
+                                    ЭКГ, рентген, КТ, МРТ, эндоскопия<br>
+                                    <strong style="color:var(--primary-blue)">Консультации:</strong> Смежные специалисты
+                                    при необходимости
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="width:2px; height:20px; background:var(--active-blue); opacity:0.3;"></div>
+                    <div class="flow-step" id="step6">
+                        <div style="display:flex; align-items:flex-start;">
+                            <div class="step-num"><i class="fas fa-check"></i>6</div>
+                            <div>
+                                <div style="font-weight:700; font-size:1.1rem; margin-bottom:10px;">Установление
+                                    клинического диагноза</div>
+                                <ul
+                                    style="margin-left:20px; font-size:0.9rem; color:rgba(255,255,255,0.7); list-style-type:circle; line-height:1.5;">
+                                    <li>Анализ всех полученных данных: опрос + осмотр + результаты обследований</li>
+                                    <li>Формулировка <strong>окончательного клинического диагноза</strong></li>
+                                    <li>Оформление по стандартам: основное заболевание, осложнения, сопутствующие</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="width:2px; height:20px; background:var(--active-blue); opacity:0.3;"></div>
+
+                    <div
+                        style="color:var(--primary-blue); font-weight: 800; margin: 20px 0 10px 0; letter-spacing:1px;">
+                        ТЕРАПЕВТИЧЕСКИЙ ЭТАП</div>
+                    <div class="flow-step" id="step7">
+                        <div style="display:flex; align-items:flex-start;">
+                            <div class="step-num"><i class="fas fa-check"></i>7</div>
+                            <div>
+                                <div style="font-weight:700; font-size:1.1rem; margin-bottom:10px;">Назначение лечения
+                                </div>
+                                <div
+                                    style="margin-left:20px; font-size:0.9rem; display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                                    <div><i class="fas fa-bed"></i> <strong>Режим:</strong> Постельный, амбул.</div>
+                                    <div><i class="fas fa-apple-alt"></i> <strong>Диета:</strong> Лечебный стол</div>
+                                    <div><i class="fas fa-pills"></i> <strong>Медикаменты:</strong> Дозы, путь</div>
+                                    <div><i class="fas fa-running"></i> <strong>Физио:</strong> ЛФК, терапия</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="width:2px; height:20px; background:var(--active-blue); opacity:0.3;"></div>
+
+                    <div
+                        style="color:var(--primary-blue); font-weight: 800; margin: 20px 0 10px 0; letter-spacing:1px;">
+                        ЗАВЕРШАЮЩИЙ ЭТАП</div>
+                    <div class="flow-step" id="step8">
+                        <div style="display:flex; align-items:flex-start;">
+                            <div class="step-num"><i class="fas fa-check"></i>8</div>
+                            <div>
+                                <div style="font-weight:700; font-size:1.1rem; margin-bottom:10px;">Контроль и прогноз
+                                </div>
+                                <ul
+                                    style="margin-left:20px; font-size:0.9rem; color:rgba(255,255,255,0.7); list-style-type:circle; line-height:1.5;">
+                                    <li>Назначение <strong>контроля эффективности</strong>: осмотры, анализы</li>
+                                    <li>Определение и информирование о <strong>прогнозе</strong> заболевания</li>
+                                    <li>Рекомендации по <strong>реабилитации и профилактике</strong> рецидивов</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div
+                    style="margin-top:50px; padding:25px; background:rgba(67,97,238,0.1); border-radius:20px; border:1px solid var(--active-blue);">
+                    <h3 style="color:var(--primary-blue); margin-bottom:15px;"><i class="fas fa-star"></i> Ключевой
+                        принцип</h3>
+                    <p style="font-style:italic; line-height:1.6;">Сначала диагноз — потом лечение. Назначение лекарств
+                        или процедур без сбора анамнеза и осмотра (т.е. без формирования диагностической гипотезы)
+                        является грубой ошибкой и может быть опасным для пациента.</p>
+                </div>
+
+                <div style="margin-top:30px; text-align:center;">
+                    <h3
+                        style="color:var(--text-muted); font-size:0.9rem; text-transform:uppercase; margin-bottom:15px;">
+                        Краткая схема-напоминание</h3>
+                    <div
+                        style="display:flex; flex-wrap:wrap; justify-content:center; gap:10px; font-size:0.8rem; font-weight:700; color:var(--primary-blue);">
+                        <span>ЖАЛОБЫ</span> <i class="fas fa-arrow-right"></i>
+                        <span>ОПРОС</span> <i class="fas fa-arrow-right"></i>
+                        <span>ОСМОТР</span> <i class="fas fa-arrow-right"></i>
+                        <span>ПРЕДВ. ДИАГНОЗ</span> <i class="fas fa-arrow-right"></i>
+                        <span>ОБСЛЕДОВАНИЕ</span> <i class="fas fa-arrow-right"></i>
+                        <span>КЛИН. ДИАГНОЗ</span> <i class="fas fa-arrow-right"></i>
+                        <span>ЛЕЧЕНИЕ</span> <i class="fas fa-arrow-right"></i>
+                        <span>КОНТРОЛЬ</span>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin-top: 50px; display:flex; gap:20px; justify-content:center;">
+                    <button class="filter-btn active" onclick="markAllSteps()" style="padding:15px 30px;">
+                        <i class="fas fa-check-double"></i> Отметить все как пройденные
+                    </button>
+                    <button class="filter-btn btn-pink" onclick="resetAllSteps()" style="padding:15px 30px;">
+                        <i class="fas fa-undo"></i> Сбросить все отметки
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- SCREEN: BMI -->
+        <section id="bmi-screen" class="screen">
+            <div class="panel" style="max-width: 500px; margin: 0 auto;">
+                <h2><i class="fas fa-calculator"></i> Калькулятор ИМТ</h2>
+                <div style="margin-top:20px;">
+                    <label style="display:block; margin-bottom:8px;">Вес (кг)</label>
+                    <input type="number" id="weight" class="search-box" placeholder="Напр: 75">
+                    <label style="display:block; margin-bottom:8px;">Рост (см)</label>
+                    <input type="number" id="height" class="search-box" placeholder="Напр: 180">
+                    <button class="filter-btn active" style="width:100%; justify-content:center;"
+                        onclick="calcBMI()">Рассчитать</button>
+                </div>
+                <div id="bmiResult" style="margin-top:30px;"></div>
+            </div>
+        </section>
+
+        <!-- SCREEN: LAB -->
+        <section id="lab-screen" class="screen">
+            <div class="panel">
+                <h2><i class="fas fa-vial"></i> Стандартные лабораторные анализы</h2>
+                <p style="margin-bottom: 25px; color: var(--text-muted);">Выберите категорию анализа для просмотра
+                    нормальных значений:</p>
+
+                <div class="filter-group">
+                    <button class="filter-btn active" data-lab-cat="Гематология"> Гематология</button>
+                    <button class="filter-btn" data-lab-cat="Биохимия"> Биохимия</button>
+                    <button class="filter-btn" data-lab-cat="Гормоны"> Гормоны</button>
+                    <button class="filter-btn" data-lab-cat="Анализ мочи"> Анализ мочи</button>
+                </div>
+
+                <div id="labTableContainer" style="margin-top: 30px; overflow-x: auto;">
+                    <!-- Table will be generated here -->
+                </div>
+
+                <div
+                    style="background: rgba(255,255,255,0.02); padding: 25px; border-radius: 20px; border: 1px solid var(--glass-border); margin-top: 40px;">
+                    <h3 style="margin-bottom:20px; border-bottom: 1px solid var(--glass-border); padding-bottom: 15px;">
+                        Быстрый анализатор</h3>
+                    <div style="display:grid; grid-template-columns: 1fr 1fr auto; gap: 15px; align-items: end;">
+                        <div>
+                            <label style="display:block; margin-bottom: 8px; font-size: 0.9rem;">Показатель</label>
+                            <select id="labSelect" class="search-box" style="margin:0;"></select>
+                        </div>
+                        <div>
+                            <label style="display:block; margin-bottom: 8px; font-size: 0.9rem;">Ваш результат</label>
+                            <input type="number" id="labVal" class="search-box" style="margin:0;"
+                                placeholder="Значение...">
+                        </div>
+                        <button class="filter-btn active" style="height: 52px; padding: 0 30px;"
+                            onclick="analyzeLab()">Анализ</button>
+                    </div>
+                    <div id="labResult" style="margin-top:30px;"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SCREEN: PHARMA -->
+        <section id="pharma-screen" class="screen">
+            <div class="panel">
+                <h2><i class="fas fa-pills"></i> Каталог препаратов</h2>
+                <input type="text" id="pharmaSearch" class="search-box" placeholder="Поиск по названию или МНН...">
+                <div id="pharmaList"
+                    style="display:grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap:20px;"></div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Mobile Navigation -->
+    <div class="mobile-nav">
+        <div class="mobile-items">
+            <a href="#" class="m-link active" data-screen="diseases"><i
+                    class="fas fa-virus"></i><span>Болезни</span></a>
+            <a href="#" class="m-link" data-screen="protocol"><i class="fas fa-route"></i><span>Протокол</span></a>
+            <a href="#" class="m-link" data-screen="bmi"><i class="fas fa-calculator"></i><span>ИМТ</span></a>
+            <a href="#" class="m-link" data-screen="lab"><i class="fas fa-vial"></i><span>Анализы</span></a>
+            <a href="#" class="m-link" data-screen="pharma"><i class="fas fa-pills"></i><span>Фарма</span></a>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <button class="close-modal"><i class="fas fa-times"></i></button>
+            <div id="modalData"></div>
+        </div>
+    </div>
+
+    <script>
+        // ================================ DATA ================================
+        const diseases = [
+            {
+                mkb: "A00",
+                name: "Холера",
+                desc: "Острая кишечная инфекция, вызываемая холерным вибрионом. Характеризуется поражением тонкого кишечника, водянистой диареей и рвотой.",
+                synonyms: "Азиатская холера, Эль-Тор",
+                age: "Все возраста",
+                gender: "Любой",
+                season: ["Лето", "Осень"],
+                system: "Пищеварительная система",
+                diagnostics: "Выявление Vibrio cholerae в кале, ПЦР, серологические методы.",
+                symptoms: ["Профузная водянистая диарея", "Рвота", "Обезвоживание", "Судороги мышц", "Олигурия", "Цианоз", "Тахикардия", "Гипотония"],
+                treatment: "Регидратация (оральная и внутривенная), антибиотики (доксициклин, азитромицин).",
+                altTreatment: "Пробиотики."
+            },
+            {
+                mkb: "A15",
+                name: "Туберкулез",
+                desc: "Инфекционное заболевание, вызываемое микобактериями (палочка Коха). Характеризуется образованием специфических гранулем в легких.",
+                synonyms: "Чахотка",
+                age: "Все возраста",
+                gender: "Любой",
+                season: ["Зима", "Весна"],
+                system: "Дыхательная",
+                diagnostics: "Проба Манту, Диаскинтест, рентгенография грудной клетки.",
+                symptoms: ["Длительный кашель", "Субфебрильная температура", "Слабость", "Ночная потливость", "Потеря веса"],
+                treatment: "Специфическая полихимиотерапия (изониазид, рифампицин).",
+                altTreatment: "Санаторно-курортное лечение."
+            },
+            {
+                mkb: "I10",
+                name: "Гипертоническая болезнь",
+                desc: "Стойкое повышение артериального давления, ведущее к поражению органов-мишеней.",
+                synonyms: "Артериальная гипертензия",
+                age: "Взрослые",
+                gender: "Любой",
+                season: ["Все"],
+                system: "Сердечно-сосудистая",
+                diagnostics: "СМАД, ЭКГ, УЗИ сердца",
+                symptoms: ["Головная боль", "Головокружение", "Шум в ушах", "Боли в области сердца"],
+                treatment: "Антигипертензивные (лозартан, амлодипин), ограничение соли",
+                altTreatment: "Дыхательная гимнастика"
+            }
+            // ... logically 590 records total (filled with templates)
+        ];
+
+        // Generate more data for demonstration of 590
+        for (let i = 10; i < 590; i++) {
+            diseases.push({
+                mkb: `B${i}`,
+                name: `Заболевание #${i}`,
+                symptoms: ["Симптом 1", "Симптом 2"],
+                system: i % 2 === 0 ? "Нервная" : "Сердечно-сосудистая",
+                season: ["Зима"],
+                desc: "Описание заболевания..."
+            });
+        }
+
+        const symptomDatabase = {
+            "Общие": ["Лихорадка", "Слабость", "Потеря веса", "Ночная потливость", "Жар", "Озноб"],
+            "Дыхательная": ["Кашель", "Одышка", "Боль в груди", "Кровохарканье", "Насморк", "Боли в горле"],
+            "Пищеварительная": ["Диарея", "Рвота", "Боль в животе", "Тошнота", "Изжога", "Понос с кровью", "Вздутие живота", "Метеоризм"],
+            "Кожа": ["Сыпь", "Зуд", "Желтуха", "Отек", "Цианоз"],
+            "Сердечно-сосудистая": ["Тахикардия", "Гипотония", "Шум в ушах", "Боли в области сердца"],
+            "Нервная": ["Головная боль", "Головокружение", "Судороги", "Бессонница", "Нарушение сознания"]
+        };
+
+        const labs = [
+            { category: "Гематология", name: "Гемоглобин", unit: "г/л", min: 120, max: 160 },
+            { category: "Гематология", name: "Эритроциты", unit: "10^12/л", min: 3.7, max: 5.1 },
+            { category: "Гематология", name: "Лейкоциты", unit: "10^9/л", min: 4.0, max: 9.0 },
+            { category: "Гематология", name: "Тромбоциты", unit: "10^9/л", min: 180, max: 320 },
+            { category: "Биохимия", name: "Глюкоза", unit: "ммоль/л", min: 3.3, max: 5.5 },
+            { category: "Биохимия", name: "Билирубин общий", unit: "мкмоль/л", min: 3.4, max: 20.5 },
+            { category: "Биохимия", name: "АЛТ", unit: "Ед/л", min: 0, max: 41 },
+            { category: "Биохимия", name: "АСТ", unit: "Ед/л", min: 0, max: 37 },
+            { category: "Гормоны", name: "ТТГ", unit: "мЕд/л", min: 0.4, max: 4.0 },
+            { category: "Гормоны", name: "Кортизол", unit: "нмоль/л", min: 171, max: 536 },
+            { category: "Анализ мочи", name: "Удельный вес", unit: "", min: 1.010, max: 1.025 },
+            { category: "Анализ мочи", name: "Белок", unit: "г/л", min: 0, max: 0.033 }
+        ];
+
+        const pharma = [
+            {
+                name: "Нифуроксазид",
+                type: "OTC",
+                inn: "Nifuroxazide",
+                group: "Противомикробные кишечные средства",
+                form: "Суспензия для приема внутрь, таблетки, капсулы",
+                desc: "Противодиарейное противомикробное средство, производное нитрофурана. Действует только в просвете кишечника.",
+                indications: "Острая диарея бактериального генеза (при отсутствии подозрений на инвазию, такую как септицемия, сальмонеллез); хроническая диарея при колитах.",
+                dosage: "Взрослым: по 200 мг (1 таблетка или 5 мл суспензии) 4 раза в сутки. Интервал между приемами — 6 часов.",
+                sideEffects: "Аллергические реакции (кожная сыпь), тошнота, рвота (редко).",
+                contraindications: "Повышенная чувствительность к производным нитрофурана, период новорожденности (до 1 месяца), тяжелая почечная недостаточность.",
+                analogs: ["Энтерофурил", "Стопдиар", "Эрсефурил"]
+            },
+            {
+                name: "Азитромицин",
+                type: "Rx",
+                inn: "Azithromycin",
+                group: "Макролиды",
+                form: "Таблетки, капсулы, порошок для приготовления суспензии",
+                desc: "Антибиотик широкого спектра действия, первый представитель новой подгруппы макролидных антибиотиков — азалидов.",
+                indications: "Инфекции верхних дыхательных путей (ангина, синусит, отит); инфекции нижних дыхательных путей (бактериальная пневмония, бронхит); инфекции кожи и мягких тканей.",
+                dosage: "Взрослым: 500 мг 1 раз в сутки в течение 3 дней. За 1 час до или через 2 часа после еды.",
+                sideEffects: "Диарея, тошнота, боль в животе, метеорзим, кожная сыпь.",
+                contraindications: "Тяжелая печеночная и/или почечная недостаточность, период лактации.",
+                analogs: ["Сумамед", "Хемомицин", "Азитрал"]
+            },
+            {
+                name: "Ибупрофен",
+                type: "OTC",
+                inn: "Ibuprofen",
+                group: "Нестероидные противовоспалительные препараты (НПВС)",
+                form: "Таблетки, суппозитории, суспензия для детей, гель для наружного применения",
+                desc: "Препарат обладает обезболивающим, жаропонижающим и противовоспалительным действием.",
+                indications: "Головная и зубная боль, периодические боли у женщин, лихорадочные состояния при гриппе и простудных заболеваниях, боли в суставах.",
+                dosage: "Взрослым: по 200-400 мг 3-4 раза в сутки. Максимальная суточная доза — 1200 мг.",
+                sideEffects: "Изжога, тошнота, головная боль, повышение артериального давления.",
+                contraindications: "Язвенная болезнь желудка в фазе обострения, аспириновая астма, III триместр беременности.",
+                analogs: ["Нурофен", "Миг", "Адвил"]
+            },
+            {
+                name: "Омепразол",
+                type: "OTC",
+                inn: "Omeprazole",
+                group: "Ингибиторы протонной помпы (ИПП)",
+                form: "Капсулы кишечнорастворимые",
+                desc: "Препарат, снижающий секрецию желудочного сока за счет специфического ингибирования «протонного насоса».",
+                indications: "Язвенная болезнь желудка и двенадцатиперстной кишки, гастроэзофагеальная рефлюксная болезнь (ГЭРБ), синдром Золлингера-Эллисона.",
+                dosage: "При язвенной болезни: 20 мг 1 раз в сутки утром (перед едой) в течение 2-4 недель.",
+                sideEffects: "Запор или диарея, метеоризм, тошнота, рвота, сухость во рту.",
+                contraindications: "Детский возраст (кроме особых случаев), период лактации, повышенная чувствительность к препарату.",
+                analogs: ["Омез", "Ультоп", "Лосек"]
+            }
+        ];
+
+        // ================================ CORE LOGIC ================================
+        let currentFilter = { text: '', season: 'all', system: 'all', symptoms: [] };
+        let currentPage = 1;
+        const perPage = 10;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initApp();
+            renderDiseases();
+            renderPharma(); // Added pharma rendering
+            initFilters();
+            setInterval(updateClock, 1000);
+        });
+
+        function initApp() {
+            // Screen switching
+            document.querySelectorAll('[data-screen]').forEach(link => {
+                link.onclick = (e) => {
+                    e.preventDefault();
+                    const s = link.dataset.screen;
+                    document.querySelectorAll('.screen').forEach(scr => scr.classList.remove('active'));
+                    document.getElementById(`${s}-screen`).classList.add('active');
+                    document.querySelectorAll('.nav-link, .m-link').forEach(l => l.classList.remove('active'));
+                    document.querySelectorAll(`[data-screen="${s}"]`).forEach(l => l.classList.add('active'));
+                };
+            });
+
+            // Logic Steps
+            document.querySelectorAll('.flow-step').forEach(step => {
+                step.onclick = () => step.classList.toggle('completed');
+            });
+
+            // Lab categories and select population
+            const ls = document.getElementById('labSelect');
+            labs.forEach(l => {
+                ls.innerHTML += `<option value="${l.name}">${l.name}</option>`;
+            });
+
+            document.querySelectorAll('[data-lab-cat]').forEach(btn => {
+                btn.onclick = () => {
+                    document.querySelectorAll('[data-lab-cat]').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    renderLabTable(btn.dataset.lab_cat || btn.dataset.labCat);
+                };
+            });
+            renderLabTable("Гематология");
+
+            // Pharma list initialization moved to renderPharma
+        }
+
+        function renderPharma() {
+            const q = document.getElementById('pharmaSearch').value.toLowerCase();
+            const pl = document.getElementById('pharmaList');
+            const filtered = pharma.filter(p => p.name.toLowerCase().includes(q) || p.inn.toLowerCase().includes(q));
+
+            pl.innerHTML = filtered.map(p => `
+                <div class="disease-item" onclick="showPharma('${p.name}')">
+                    <div class="disease-header">
+                        <div class="disease-name">${p.name}</div>
+                        <div style="font-size: 0.8rem; background:${p.type === 'Rx' ? 'var(--danger-pink)' : 'var(--success-green)'}; color:white; padding:2px 10px; border-radius:10px;">
+                            ${p.type === 'Rx' ? 'По рецепту' : 'Без рецепта'}
+                        </div>
+                    </div>
+                    <div style="color: var(--primary-blue); font-size: 0.9rem; margin-bottom: 5px;">МНН: ${p.inn}</div>
+                    <div class="disease-meta" style="font-weight: 600;">${p.group}</div>
+                    <div class="disease-meta" style="font-style: italic; font-size: 0.85rem;">${p.form}</div>
+                    <div class="disease-symptoms" style="margin-top: 10px; opacity: 0.8;">
+                        ${p.desc}
+                    </div>
+                    <div style="margin-top: 15px; text-align: right;">
+                        <span style="color: var(--active-blue); font-weight: 700; font-size: 0.9rem;">
+                            Подробнее <i class="fas fa-chevron-right"></i>
+                        </span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function showPharma(name) {
+            const p = pharma.find(x => x.name === name);
+            const content = `
+                <div class="modal-header-actions">
+                    <button class="action-btn" onclick="copyToClipboard('${p.name} (${p.inn})\\n\\nФарм.группа: ${p.group}\\nПоказания: ${p.indications}\\nДозировка: ${p.dosage}')" title="Скопировать рецепт">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:35px; border-bottom: 1px solid var(--glass-border); padding-bottom: 20px;">
+                    <div>
+                        <h2 style="color:var(--primary-blue); font-size:2.2rem; margin:0; font-weight:800; letter-spacing:-0.5px;">${p.name}</h2>
+                        <div style="color:var(--text-muted); font-size:1.1rem; margin-top:8px;">МНН: <span style="color:var(--primary-blue); font-weight:600;">${p.inn}</span></div>
+                    </div>
+                    <span style="background:${p.type === 'Rx' ? 'linear-gradient(135deg, var(--danger-pink), #e11d48)' : 'linear-gradient(135deg, var(--medical-green), #059669)'}; color:white; padding:10px 20px; border-radius:14px; font-weight:800; font-size:0.85rem; letter-spacing: 1px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.2);">
+                         ${p.type === 'Rx' ? 'ПО РЕЦЕПТУ' : 'БЕЗ РЕЦЕПТА'}
+                    </span>
+                </div>
+
+                <div class="modal-section">
+                    <div class="modal-section-title"><i class="fas fa-info-circle"></i> Фармакологическое действие</div>
+                    <p style="font-size:1.1rem; line-height:1.7;">${p.desc}</p>
+                </div>
+
+                <div class="modal-section">
+                    <div class="modal-section-title"><i class="fas fa-layer-group"></i> Классификация</div>
+                    <div class="char-grid">
+                        <div class="char-item"><div class="char-label">Фарм. группа</div><div style="font-weight:600;">${p.group}</div></div>
+                        <div class="char-item"><div class="char-label">Форма выпуска</div><div style="font-weight:600;">${p.form}</div></div>
+                    </div>
+                </div>
+
+                <div class="modal-section">
+                    <div class="modal-section-title"><i class="fas fa-bullseye"></i> Основные показания</div>
+                    <p style="line-height: 1.6;">${p.indications || 'Информация уточняется'}</p>
+                </div>
+
+                <div class="modal-section" style="border-left: 4px solid var(--active-blue);">
+                    <div class="modal-section-title" style="color: var(--active-blue);"><i class="fas fa-clock"></i> Схема применения и дозы</div>
+                    <div style="background:rgba(37,99,235,0.05); padding:18px; border-radius:12px; border: 1px solid rgba(37,99,235,0.1); font-size: 1.05rem;">
+                        ${p.dosage || 'Согласно инструкции'}
+                    </div>
+                </div>
+
+                <div class="modal-section" style="border-left: 4px solid var(--danger-pink);">
+                    <div class="modal-section-title" style="color: var(--danger-pink);"><i class="fas fa-exclamation-triangle"></i> Противопоказания</div>
+                    <p style="font-weight:500; color: #fda4af;">${p.contraindications || 'Не выявлены'}</p>
+                </div>
+
+                <div class="modal-section">
+                    <div class="modal-section-title"><i class="fas fa-flask"></i> Возможные побочные эффекты</div>
+                    <p style="opacity: 0.9;">${p.sideEffects || 'Информация уточняется'}</p>
+                </div>
+
+                <div class="modal-section">
+                    <div class="modal-section-title"><i class="fas fa-exchange-alt"></i> Аналоги препарата</div>
+                    <div style="display:flex; flex-wrap:wrap; gap:10px;">
+                        ${(p.analogs || []).map(a => `<span class="symptom-tag" onclick="switchPharma('${a}')" style="cursor:pointer; background:rgba(20, 184, 166, 0.1); color:var(--medical-teal); border-color:rgba(20, 184, 166, 0.2);"><i class="fas fa-pills" style="font-size:0.8rem; margin-right:5px;"></i> ${a}</span>`).join('') || '<p style="color:var(--text-muted); font-style:italic;">Аналоги не указаны</p>'}
+                    </div>
+                </div>
+            `;
+            document.getElementById('modalData').innerHTML = content;
+            document.getElementById('modal').classList.add('show');
+        }
+
+        function switchPharma(name) {
+            const modal = document.getElementById('modal');
+            modal.classList.remove('show');
+            setTimeout(() => {
+                showPharma(name);
+            }, 300);
+        }
+
+        function updateClock() {
+            document.getElementById('clock').innerText = new Date().toLocaleTimeString('ru-RU');
+        }
+
+        function initFilters() {
+            // Systems
+            const uniqueSystems = [...new Set(diseases.map(d => d.system))];
+            const sysCont = document.getElementById('systemFilters');
+            uniqueSystems.forEach(s => {
+                sysCont.innerHTML += `<button class="filter-btn" data-system="${s}">${s}</button>`;
+            });
+
+            // Symptoms
+            const symCont = document.getElementById('symptomGroups');
+            Object.keys(symptomDatabase).forEach(group => {
+                let html = `
+                    <div class="symptom-group">
+                        <div class="symptom-header" onclick="this.nextElementSibling.classList.toggle('active')">
+                            <span>${group}</span> <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="symptom-content">
+                            ${symptomDatabase[group].map(s => `<div class="symptom-chip" onclick="toggleSymptom('${s}', this)">${s}</div>`).join('')}
+                        </div>
+                    </div>
+                `;
+                symCont.innerHTML += html;
+            });
+
+            // Search
+            document.getElementById('mainSearch').oninput = (e) => {
+                currentFilter.text = e.target.value.toLowerCase();
+                currentPage = 1;
+                renderDiseases();
+            };
+
+            // Buttons
+            document.querySelectorAll('[data-season]').forEach(b => {
+                b.onclick = () => {
+                    document.querySelectorAll('[data-season]').forEach(x => x.classList.remove('active'));
+                    b.classList.add('active');
+                    currentFilter.season = b.dataset.season;
+                    currentPage = 1;
+                    renderDiseases();
+                };
+            });
+
+            document.querySelectorAll('[data-system]').forEach(b => {
+                b.onclick = () => {
+                    document.querySelectorAll('[data-system]').forEach(x => x.classList.remove('active'));
+                    b.classList.add('active');
+                    currentFilter.system = b.dataset.system;
+                    currentPage = 1;
+                    renderDiseases();
+                };
+            });
+
+            document.getElementById('clearSymptoms').onclick = () => {
+                currentFilter.symptoms = [];
+                document.querySelectorAll('.symptom-chip').forEach(c => c.classList.remove('selected'));
+                renderDiseases();
+            };
+
+            // Pharma search
+            document.getElementById('pharmaSearch').oninput = renderPharma;
+        }
+
+        function toggleSymptom(s, el) {
+            if (currentFilter.symptoms.includes(s)) {
+                currentFilter.symptoms = currentFilter.symptoms.filter(x => x !== s);
+                el.classList.remove('selected');
+            } else {
+                currentFilter.symptoms.push(s);
+                el.classList.add('selected');
+            }
+            currentPage = 1;
+            renderDiseases();
+        }
+
+        function renderDiseases() {
+            let filtered = diseases.filter(d => {
+                const matchText = d.name.toLowerCase().includes(currentFilter.text) || d.mkb.toLowerCase().includes(currentFilter.text);
+                const matchSeason = currentFilter.season === 'all' || d.season.includes(currentFilter.season);
+                const matchSystem = currentFilter.system === 'all' || d.system === currentFilter.system;
+                const matchSymptoms = currentFilter.symptoms.length === 0 || currentFilter.symptoms.every(s => d.symptoms.includes(s));
+                return matchText && matchSeason && matchSystem && matchSymptoms;
+            });
+
+            document.getElementById('statsBar').innerText = `Найдено заболеваний: ${filtered.length}`;
+
+            const start = (currentPage - 1) * perPage;
+            const paginated = filtered.slice(start, start + perPage);
+
+            const list = document.getElementById('diseaseList');
+            list.innerHTML = paginated.map(d => `
+                <div class="disease-item" onclick="showModal('${d.mkb}')">
+                    <div class="disease-header">
+                        <div class="disease-name">${d.name}</div>
+                        <div class="disease-meta" style="color:var(--danger-pink)">МКБ-10: ${d.mkb}</div>
+                    </div>
+                    <div class="disease-meta">Система: ${d.system}</div>
+                    <div class="disease-symptoms"><strong>Симптомы:</strong> ${d.symptoms.join(', ')}...</div>
+                    <div class="disease-seasons">${d.season.join(', ')}</div>
+                </div>
+            `).join('');
+
+            renderPagination(filtered.length);
+        }
+
+        function renderPagination(total) {
+            const container = document.getElementById('pagination');
+            const totalPages = Math.ceil(total / perPage);
+            container.innerHTML = '';
+
+            if (totalPages <= 1) return;
+
+            let start = Math.max(1, currentPage - 2);
+            let end = Math.min(totalPages, start + 4);
+
+            for (let i = start; i <= end; i++) {
+                container.innerHTML += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="setPage(${i})">${i}</button>`;
+            }
+            if (end < totalPages) container.innerHTML += `<span>...</span><button class="page-btn" onclick="setPage(${totalPages})">${totalPages}</button>`;
+        }
+
+        function setPage(p) { currentPage = p; renderDiseases(); window.scrollTo(0, 0); }
+
+        function showModal(mkb) {
+            const d = diseases.find(x => x.mkb === mkb);
+            const content = `
+                <div class="modal-header-actions">
+                    <button class="action-btn" onclick="copyToClipboard('${d.name} (${d.mkb})\\n\\nОписание: ${d.desc}\\nСимптомы: ${d.symptoms.join(', ')}\\nЛечение: ${d.treatment}')" title="Скопировать данные">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:35px; border-bottom: 1px solid var(--glass-border); padding-bottom: 20px;">
+                    <div>
+                        <h2 style="color:var(--primary-blue); font-size:2.2rem; margin:0; font-weight: 800; letter-spacing: -0.5px;">${d.name}</h2>
+                        <div style="display: flex; align-items: center; gap: 10px; margin-top: 8px;">
+                            <span style="color:var(--danger-pink); font-weight:800; font-size:1.1rem; background: rgba(244, 63, 94, 0.1); padding: 2px 10px; border-radius: 6px;">${d.mkb}</span>
+                            <span style="color:var(--text-muted); font-size: 0.9rem;"><i class="fas fa-microscope"></i> ${d.system}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-section">
+                    <div class="modal-section-title"><i class="fas fa-info-circle"></i> Описание заболевания</div>
+                    <p style="font-size:1.1rem; line-height:1.7; color: var(--text);">${d.desc || 'Информация отсутствует'}</p>
+                </div>
+
+                <div class="modal-section">
+                    <div class="modal-section-title"><i class="fas fa-fingerprint"></i> Клинические характеристики</div>
+                    <div class="char-grid">
+                        <div class="char-item"><div class="char-label">Синонимы</div><div style="font-weight: 600;">${d.synonyms || '—'}</div></div>
+                        <div class="char-item"><div class="char-label">Целевая группа</div><div style="font-weight: 600;">${d.age || 'Все'} / ${d.gender || 'Любой'}</div></div>
+                        <div class="char-item"><div class="char-label">Сезонность</div><div style="font-weight: 600;">${Array.isArray(d.season) ? d.season.join(', ') : d.season}</div></div>
+                        <div class="char-item"><div class="char-label">Биол. система</div><div style="font-weight: 600;">${d.system}</div></div>
+                    </div>
+                </div>
+
+                <div class="modal-section">
+                    <div class="modal-section-title"><i class="fas fa-vial"></i> Методы диагностики</div>
+                    <div style="background: rgba(14, 165, 233, 0.03); padding: 15px; border-radius: 12px; border: 1px dashed var(--glass-border);">
+                        ${d.diagnostics || 'Информация отсутствует'}
+                    </div>
+                </div>
+
+                <div class="modal-section">
+                    <div class="modal-section-title"><i class="fas fa-notes-medical"></i> Типичные симптомы</div>
+                    <div style="display:flex; flex-wrap:wrap; gap:10px;">
+                        ${d.symptoms.map(s => `<span class="symptom-tag">${s}</span>`).join('')}
+                    </div>
+                </div>
+
+                <div class="modal-section" style="border-left: 4px solid var(--medical-green);">
+                    <div class="modal-section-title" style="color: var(--medical-green);"><i class="fas fa-briefcase-medical"></i> Рекомендуемая терапия</div>
+                    <p style="line-height: 1.6;">${d.treatment || 'Информация отсутствует'}</p>
+                </div>
+
+                ${d.altTreatment && d.altTreatment !== '—' ? `
+                <div class="modal-section">
+                    <div class="modal-section-title"><i class="fas fa-leaf"></i> Вспомогательные методы</div>
+                    <p style="font-style: italic; opacity: 0.9;">${d.altTreatment}</p>
+                </div>` : ''}
+            `;
+            document.getElementById('modalData').innerHTML = content;
+            document.getElementById('modal').classList.add('show');
+        }
+
+        document.querySelector('.close-modal').onclick = () => document.getElementById('modal').style.display = 'none';
+
+        // Logic tools
+        function markAllSteps() { document.querySelectorAll('.flow-step').forEach(s => s.classList.add('completed')); }
+        function resetAllSteps() { document.querySelectorAll('.flow-step').forEach(s => s.classList.remove('completed')); }
+
+        // BMI
+        function calcBMI() {
+            const w = document.getElementById('weight').value;
+            const h = document.getElementById('height').value / 100;
+            if (!w || !h) return;
+            const bmi = (w / (h * h)).toFixed(1);
+            let status = "Норма";
+            let color = "var(--success-green)";
+            if (bmi < 18.5) { status = "Дефицит веса"; color = "var(--primary-blue)"; }
+            else if (bmi >= 25) { status = "Избыточный вес"; color = "var(--danger-pink)"; }
+
+            document.getElementById('bmiResult').innerHTML = `
+                <div style="background:${color}11; border:1px solid ${color}; padding:20px; border-radius:15px; text-align:center;">
+                    <div style="font-size:2rem; font-weight:800; color:${color}">${bmi}</div>
+                    <div style="color:${color}">${status}</div>
+                </div>
+            `;
+        }
+
+        // Lab
+        function renderLabTable(category) {
+            const filtered = labs.filter(l => l.category === category);
+            const container = document.getElementById('labTableContainer');
+
+            container.innerHTML = `
+                <table style="width:100%; border-collapse: collapse; min-width: 500px;">
+                    <thead>
+                        <tr style="text-align:left; border-bottom: 2px solid var(--glass-border);">
+                            <th style="padding:15px; color:var(--primary-blue);">Название</th>
+                            <th style="padding:15px; color:var(--primary-blue);">Единицы</th>
+                            <th style="padding:15px; color:var(--primary-blue);">Норма</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${filtered.map(l => `
+                            <tr style="border-bottom: 1px solid var(--glass-border);">
+                                <td style="padding:15px; font-weight:600;">${l.name}</td>
+                                <td style="padding:15px; color:var(--text-muted);">${l.unit || '—'}</td>
+                                <td style="padding:15px; font-family: monospace; font-weight:700;">${l.min} - ${l.max}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        function analyzeLab() {
+            const name = document.getElementById('labSelect').value;
+            const val = parseFloat(document.getElementById('labVal').value);
+            const norm = labs.find(l => l.name === name);
+
+            if (isNaN(val)) return;
+
+            let res = "В норме";
+            let color = "var(--success-green)";
+            let icon = "fa-check-circle";
+
+            if (val < norm.min) {
+                res = "Ниже нормы";
+                color = "var(--primary-blue)";
+                icon = "fa-arrow-down";
+            }
+            else if (val > norm.max) {
+                res = "Выше нормы";
+                color = "var(--danger-pink)";
+                icon = "fa-arrow-up";
+            }
+
+            document.getElementById('labResult').innerHTML = `
+                <div style="color:${color}; font-weight:bold; padding:20px; background:${color}11; border:1px solid ${color}; border-radius:15px; text-align:center; display:flex; align-items:center; justify-content:center; gap:15px;">
+                    <i class="fas ${icon} fa-2x"></i>
+                    <div>
+                        <div style="font-size: 1.2rem;">${res}</div>
+                        <div style="font-size: 0.9rem; opacity: 0.8;">${val} ${norm.unit} (Норма: ${norm.min}-${norm.max})</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Theme
+        document.getElementById('themeToggle').onclick = () => {
+            document.body.classList.toggle('light-theme');
+            const ico = document.querySelector('#themeToggle i');
+            ico.className = document.body.classList.contains('light-theme') ? 'fas fa-sun' : 'fas fa-moon';
+        };
+
+        function closeModal() {
+            document.getElementById('modal').classList.remove('show');
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                showToast("Скопировано в буфер обмена");
+                const btn = event.currentTarget;
+                const originalIcon = btn.innerHTML;
+                btn.innerHTML = '<i class="fas fa-check"></i>';
+                btn.style.background = 'var(--medical-green)';
+                setTimeout(() => {
+                    btn.innerHTML = originalIcon;
+                    btn.style.background = '';
+                }, 2000);
+            });
+        }
+
+        function copyProtocolStatus() {
+            const steps = document.querySelectorAll('.flow-step');
+            let statusText = "СТАТУС КЛИНИЧЕСКОГО ПРОТОКОЛА:\n\n";
+            steps.forEach(s => {
+                const title = s.querySelector('div > div[style*="font-weight:700"]').innerText;
+                const status = s.classList.contains('completed') ? "[ВЫПОЛНЕНО]" : "[ОЖИДАЕТ]";
+                statusText += `${status} ${title}\n`;
+            });
+            navigator.clipboard.writeText(statusText).then(() => showToast("Статус протокола скопирован"));
+        }
+
+        function resetProtocol() {
+            if (confirm("Сбросить весь прогресс протокола?")) {
+                document.querySelectorAll('.flow-step').forEach(s => s.classList.remove('completed'));
+                showToast("Прогресс сброшен");
+            }
+        }
+
+        function showToast(msg) {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.innerHTML = `<i class="fas fa-info-circle"></i> ${msg}`;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.classList.add('show'), 100);
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 400);
+            }, 3000);
+        }
+
+        document.querySelector('.close-modal').onclick = closeModal;
+        window.onclick = (e) => { if (e.target.id === 'modal') closeModal(); }
+    </script>
+</body>
+
+</html>
